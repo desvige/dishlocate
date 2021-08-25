@@ -1,8 +1,8 @@
 (ns dishlocate.gmaps
   (:require [clojure.string :as str])
-  (:require [cheshire.core :as json]))
+  (:require [cheshire.core :as json])
+  (:require [dishlocate.gmaps.private :as priv]))
 
-(def api-key "<insert key here>")
 
 (defn read-json [get-json-request-fn args]
   (let [json-str (slurp (apply get-json-request-fn args))]
@@ -11,7 +11,7 @@
 ;; find-restaurants
 
 (defn get-text-search-request [location]
-  (let [parameters (str "key=" api-key
+  (let [parameters (str "key=" priv/api-key
           "&query=restaurants%20" (str/replace location #" " "%20"))
         output "json"]
     (str "https://maps.googleapis.com/maps/api/place/textsearch/"
@@ -32,7 +32,7 @@
 ;; get-menu-url
 
 (defn get-place-details-request [place-id]
-  (let [parameters (str "key=" api-key "&place_id=" place-id "&fields=url")
+  (let [parameters (str "key=" priv/api-key "&place_id=" place-id "&fields=url")
         output "json"]
     (str "https://maps.googleapis.com/maps/api/place/details/"
       output "?" parameters)))
