@@ -3,7 +3,6 @@
   (:require [cheshire.core :as json])
   (:require [dishlocate.gmaps.private :as priv]))
 
-
 (defn read-json [get-json-request-fn args]
   (let [json-str (slurp (apply get-json-request-fn args))]
     (json/parse-string json-str true)))  ; keywordize-keys

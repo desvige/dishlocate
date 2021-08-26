@@ -7,5 +7,6 @@ Set key for Google API in src/dishlocate/gmaps.clj.
 
 ### Usage
 
-    (load-file "src/dishlocate.clj")
-    (find-dish "tacos" "central park")
+```clojure
+(dishlocate.core/find-dish "tacos" "central park")
+```
