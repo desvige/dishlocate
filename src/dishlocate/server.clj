@@ -4,21 +4,19 @@
   (:use ring.middleware.params)
   (:use ring.util.response))
 
-(defn jsonize [[place-id name]]
-  (str "{\"id\" : \"" place-id "\", \"name\" : \"" name "\"},"))
+;; server
+
+(defn to-json [place]
+  (str "{\"id\" : \"" (get place :id) "\", \"name\" : \"" (get place :name) "\"},"))
 
 (defn find-dish [dish location]
   (let [places (core/find-dish dish location)]
-    (str "{\"results\" : ["
-      (apply str
-        (map jsonize places))
-      "]}")))
+    (str "{\"results\" : [" (apply str (map to-json places)) "]}")))
 
 (defn handler [{{dish "dish", location "location"} :params}]
   (-> (response (find-dish dish location))
     (content-type "application/json")))
 
-(def app
-  (-> handler wrap-params))
+(def server (-> handler wrap-params))
 
-(run-jetty app {:port 8080})
+(run-jetty server {:port 8080})

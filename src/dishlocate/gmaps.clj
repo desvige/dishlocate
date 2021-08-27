@@ -1,13 +1,9 @@
 (ns dishlocate.gmaps
   (:require [clojure.string :as str])
-  (:require [cheshire.core :as json])
-  (:require [dishlocate.gmaps.private :as priv]))
+  (:require [dishlocate.gmaps.private :as priv])
+  (:require [dishlocate.utils :as utils]))
 
-(defn read-json [get-json-request-fn args]
-  (let [json-str (slurp (apply get-json-request-fn args))]
-    (json/parse-string json-str true)))  ; keywordize-keys
-
-;; find-restaurants
+;; find-places
 
 (defn get-text-search-request [location]
   (let [parameters (str "key=" priv/api-key
@@ -17,16 +13,10 @@
       output "?" parameters)))
 
 (defn read-text-search [location]
-  (read-json get-text-search-request (list location)))
+  (utils/read-json get-text-search-request (list location)))
 
-(defn find-restaurants [location]
-  (let [results (get (read-text-search location) :results)]
-    (apply merge
-      (map (fn [result]
-        (let [place-id (get result :place_id)
-              name (get result :name)]
-          (hash-map place-id name)))
-        results))))
+(defn find-places [location]
+  (get (read-text-search location) :results))
 
 ;; get-menu-url
 
@@ -37,11 +27,19 @@
       output "?" parameters)))
 
 (defn read-place-details [place-id]
-  (read-json get-place-details-request (list place-id)))
+  (utils/read-json get-place-details-request (list place-id)))
 
 (defn get-gmaps-url [place-id]
   (let [result (get (read-place-details place-id) :result)]
     (get result :url)))
 
-(defn get-menu-url [[place-id name]]
-  (get-gmaps-url place-id))
+(defn get-menu-url [place]
+  (let [place-id (get place :place_id)]
+    (get-gmaps-url place-id)))
+
+;; arrange-data
+
+(defn arrange-data [place]
+  {:id (get place :place_id), :name (get place :name),
+    :address (get place :formatted_address),
+    :opened (get (get place :opening_hours) :open_now)})

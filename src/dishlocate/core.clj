@@ -12,6 +12,10 @@
     (catch Exception ex
       false)))
 
-(defn find-dish [dish location]
-  (let [places (maps/find-restaurants location)]
+(defn find-places-with-dish [dish location]
+  (let [places (maps/find-places location)]
     (utils/pfilter (partial has-dish? dish) places)))  ; parallel-filter
+
+(defn find-dish [dish location]
+  (let [places (find-places-with-dish dish location)]
+    (map maps/arrange-data places)))
