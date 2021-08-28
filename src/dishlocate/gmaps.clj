@@ -5,32 +5,34 @@
 
 ;; find-places
 
-(defn get-text-search-request [location]
-  (let [parameters (str "key=" priv/api-key
-          "&query=restaurants%20" (str/replace location #" " "%20"))
-        output "json"]
-    (str "https://maps.googleapis.com/maps/api/place/textsearch/"
-      output "?" parameters)))
+(defn get-search-params [location]
+  (str "key=" priv/api-key "&query=restaurants%20"
+    (str/replace location #" " "%20")))
 
-(defn read-text-search [location]
-  (utils/read-json get-text-search-request (list location)))
+(defn get-search-request [location]
+  (let [params (get-search-params location)]
+    (str "https://maps.googleapis.com/maps/api/place/textsearch/json?" params)))
+
+(defn read-search [location]
+  (utils/read-json (get-search-request location)))
 
 (defn find-places [location]
-  (get (read-text-search location) :results))
+  (get (read-search location) :results))
 
 ;; get-menu-url
 
-(defn get-place-details-request [place-id]
-  (let [parameters (str "key=" priv/api-key "&place_id=" place-id "&fields=url")
-        output "json"]
-    (str "https://maps.googleapis.com/maps/api/place/details/"
-      output "?" parameters)))
+(defn get-details-params [place-id]
+  (str "key=" priv/api-key "&place_id=" place-id "&fields=url"))
 
-(defn read-place-details [place-id]
-  (utils/read-json get-place-details-request (list place-id)))
+(defn get-details-request [place-id]
+  (let [params (get-details-params place-id)]
+    (str "https://maps.googleapis.com/maps/api/place/details/json?" params)))
+
+(defn read-details [place-id]
+  (utils/read-json (get-details-request place-id)))
 
 (defn get-gmaps-url [place-id]
-  (let [result (get (read-place-details place-id) :result)]
+  (let [result (get (read-details place-id) :result)]
     (get result :url)))
 
 (defn get-menu-url [place]

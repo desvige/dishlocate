@@ -9,6 +9,5 @@
 
 ;; read-json
 
-(defn read-json [get-json-request-fn args]
-  (let [json-str (slurp (apply get-json-request-fn args))]
-    (json/parse-string json-str true)))  ; keywordize-keys
+(defn read-json [uri]
+  (json/parse-string (slurp uri) true))  ; keywordize-keys
