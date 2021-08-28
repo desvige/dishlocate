@@ -1,4 +1,5 @@
 (ns dishlocate.server
+  (:require [cheshire.core :as json])
   (:require [dishlocate.core :as core])
   (:use ring.adapter.jetty)
   (:use ring.middleware.params)
@@ -6,12 +7,9 @@
 
 ;; server
 
-(defn to-json [place]
-  (str "{\"id\" : \"" (get place :id) "\", \"name\" : \"" (get place :name) "\"},"))
-
 (defn find-dish [dish location]
   (let [places (core/find-dish dish location)]
-    (str "{\"results\" : [" (apply str (map to-json places)) "]}")))
+    (str "{\"results\" : [" (json/generate-string places) "]}")))
 
 (defn handler [{{dish "dish", location "location"} :params}]
   (-> (response (find-dish dish location))
