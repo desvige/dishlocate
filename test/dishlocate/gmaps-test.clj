@@ -1,10 +1,10 @@
-(ns dishlocate.gmaps.tests
+(ns dishlocate.gmaps-test
   (:require [dishlocate.gmaps :as maps])
   (:use clojure.test))
 
 ;; find-places
 
-(def search-json "test/dishlocate/gmaps/text-search.json")
+(def search-json "test/dishlocate/text-search.json")
 
 (deftest find-places
   (with-redefs [maps/get-search-request (constantly search-json)]
@@ -12,7 +12,7 @@
 
 ;; get-menu-url
 
-(def details-json "test/dishlocate/gmaps/place-details.json")
+(def details-json "test/dishlocate/place-details.json")
 
 (deftest get-gmaps-url
   (with-redefs [maps/get-details-request (constantly details-json)]

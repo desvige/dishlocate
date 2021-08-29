@@ -1,11 +1,11 @@
-(ns dishlocate.core.tests
+(ns dishlocate.core-test
   (:require [dishlocate.core :as core])
   (:require [dishlocate.gmaps :as maps])
   (:use clojure.test))
 
 ;; has-dish?
 
-(def menu-url "test/dishlocate/core/menu.html")
+(def menu-url "test/dishlocate/menu.html")
 
 (deftest has-dish
   (with-redefs [maps/get-menu-url (constantly menu-url)]
